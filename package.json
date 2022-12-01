@@ -1,0 +1,32 @@
+{
+  "name": "advent-of-code-2022",
+  "version": "1.0.0",
+  "description": "Liam Wibberleys advent of code 2022",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test",
+    "build": "npx tsc",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm.cmd run compile",
+    "pretest": "npm.cmd run compile",
+    "posttest": "npm.cmd run lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wibberley/Advent-of-code-2022.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Wibberley/Advent-of-code-2022/issues"
+  },
+  "homepage": "https://github.com/Wibberley/Advent-of-code-2022#readme",
+  "devDependencies": {
+    "gts": "^3.1.1",
+    "typescript": "~4.7.0",
+    "@types/node": "^14.11.2"
+  }
+}
