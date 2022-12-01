@@ -1,4 +1,4 @@
-import {calculateTaskOne, calculateTaskTwo} from '.';
+import {calculate} from '.';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -8,7 +8,7 @@ describe('day-1-calorie-counting-task-one', () => {
     const input = '100';
 
     // When
-    const output = calculateTaskOne(input);
+    const output = calculate(input, 1);
 
     // Then
     expect(output).toEqual(100);
@@ -20,7 +20,7 @@ describe('day-1-calorie-counting-task-one', () => {
     200`;
 
     // When
-    const output = calculateTaskOne(input);
+    const output = calculate(input, 1);
 
     // Then
     expect(output).toEqual(300);
@@ -38,7 +38,7 @@ describe('day-1-calorie-counting-task-one', () => {
     400`;
 
     // When
-    const output = calculateTaskOne(input);
+    const output = calculate(input, 1);
 
     // Then
     expect(output).toEqual(700);
@@ -52,7 +52,7 @@ describe('day-1-calorie-counting-task-one', () => {
     );
 
     // When
-    const output = calculateTaskOne(input);
+    const output = calculate(input, 1);
 
     // Then
     expect(output).toEqual(11598);
@@ -66,7 +66,7 @@ describe('day-1-calorie-counting-task-one', () => {
     );
 
     // When
-    const output = calculateTaskOne(input);
+    const output = calculate(input, 1);
 
     // Then
     console.log(output);
@@ -90,7 +90,7 @@ describe('day-1-calorie-counting-task-two', () => {
         600`;
 
     // When
-    const output = calculateTaskTwo(input);
+    const output = calculate(input, 3);
 
     // Then
     expect(output).toEqual(1750);
@@ -104,7 +104,7 @@ describe('day-1-calorie-counting-task-two', () => {
     );
 
     // When
-    const output = calculateTaskTwo(input);
+    const output = calculate(input, 3);
 
     // Then
     console.log(output);

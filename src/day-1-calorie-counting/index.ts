@@ -1,37 +1,32 @@
-export const calculateTaskOne = (input: string): number => {
-  const sortedElves = getSortedElves(input);
-  return sortedElves[0];
+export const calculate = (input: string, totalElvesToSum: number): number => {
+  const sortedElves = getElvesByTotalCalories(input);
+  let total = 0;
+  for (var i = 0; i < totalElvesToSum; i++) {
+    total += sortedElves[i];
+  }
+  return total;
 };
 
-export const calculateTaskTwo = (input: string): number => {
-  const sortedElves = getSortedElves(input);
-  return sortedElves[0] + sortedElves[1] + sortedElves[2];
-};
-
-const getSortedElves = (input: string): number[] => {
+const getElvesByTotalCalories = (input: string): number[] => {
   const calories: string[] = input.split(/\r?\n/);
 
   let elfIndex = 0;
 
-  const elvesSummedCalories = calories.reduce<number[]>(
-    (finalCollection, currentCalorie) => {
+  const totalCaloriesByElf = calories.reduce<number[]>(
+    (totalCaloriesByElf, currentCalorie) => {
       if (currentCalorie.trim() === '') {
-        elfIndex++;
-        return finalCollection;
+        totalCaloriesByElf[++elfIndex] = 0;
+        return totalCaloriesByElf;
       }
 
-      if (!finalCollection[elfIndex]) {
-        finalCollection[elfIndex] = 0;
-      }
+      totalCaloriesByElf[elfIndex] += parseInt(currentCalorie.trim());
 
-      finalCollection[elfIndex] += parseInt(currentCalorie.trim());
-
-      return finalCollection;
+      return totalCaloriesByElf;
     },
-    []
+    [0]
   );
 
-  return elvesSummedCalories.sort((a, b) => {
+  return totalCaloriesByElf.sort((a, b) => {
     return b - a;
   });
 };
