@@ -4,16 +4,22 @@ export enum GameChoice {
   Scissors,
 }
 
+export enum GameOutcome {
+  'DRAW',
+  'WIN',
+  'LOSS',
+}
+
 const opponentChoiceMapping = {
   A: GameChoice.Rock,
   B: GameChoice.Paper,
   C: GameChoice.Scissors,
 };
 
-const yourChoiceMapping = {
-  X: GameChoice.Rock,
-  Y: GameChoice.Paper,
-  Z: GameChoice.Scissors,
+const yourResultMapping = {
+  X: GameOutcome.LOSS,
+  Y: GameOutcome.DRAW,
+  Z: GameOutcome.WIN,
 };
 
 const scoreMapping = {
@@ -22,14 +28,20 @@ const scoreMapping = {
   [GameChoice.Scissors]: 3,
 };
 
-const GameChoiceBeatGameChoiceMapping = {
+const LosingChoiceMapping = {
   [GameChoice.Rock]: GameChoice.Scissors,
   [GameChoice.Paper]: GameChoice.Rock,
   [GameChoice.Scissors]: GameChoice.Paper,
 };
 
+const WinningChoiceMapping = {
+  [GameChoice.Rock]: GameChoice.Paper,
+  [GameChoice.Paper]: GameChoice.Scissors,
+  [GameChoice.Scissors]: GameChoice.Rock,
+};
+
 export interface GameScoreResult {
-  outcome: 'DRAW' | 'WIN' | 'LOSS';
+  outcome: GameOutcome;
   score: number;
 }
 
@@ -39,22 +51,41 @@ export const calculateGameScore = (
 ): GameScoreResult => {
   if (opponentChoice === yourChoice) {
     return {
-      outcome: 'DRAW',
+      outcome: GameOutcome.DRAW,
       score: 3 + scoreMapping[yourChoice],
     };
   }
 
-  if (GameChoiceBeatGameChoiceMapping[opponentChoice] === yourChoice) {
+  if (LosingChoiceMapping[opponentChoice] === yourChoice) {
     return {
-      outcome: 'LOSS',
+      outcome: GameOutcome.LOSS,
       score: 0 + scoreMapping[yourChoice],
     };
   }
 
   return {
-    outcome: 'WIN',
+    outcome: GameOutcome.WIN,
     score: 6 + scoreMapping[yourChoice],
   };
+};
+
+const getYourGameChoiceFromOpponentChoice = (
+  opponentGameChoice: GameChoice,
+  expectedOutcome: GameOutcome
+): GameChoice => {
+  if (expectedOutcome === GameOutcome.DRAW) {
+    return opponentGameChoice;
+  }
+
+  if (expectedOutcome === GameOutcome.LOSS) {
+    return LosingChoiceMapping[opponentGameChoice];
+  }
+
+  if (expectedOutcome === GameOutcome.WIN) {
+    return WinningChoiceMapping[opponentGameChoice];
+  }
+
+  throw 'Invalid expected outcome';
 };
 
 export const calculateStrategyResult = (input: string): number => {
@@ -63,14 +94,14 @@ export const calculateStrategyResult = (input: string): number => {
   games.forEach(game => {
     const choices = game.split(' ');
     const opponentChoice = choices[0].trim();
-    const yourChoice = choices[1].trim();
+    const desiredResult = choices[1].trim();
 
     if (!opponentChoiceMapping.hasOwnProperty(opponentChoice)) {
       console.warn('Invalid Key');
       return;
     }
 
-    if (!yourChoiceMapping.hasOwnProperty(yourChoice)) {
+    if (!yourResultMapping.hasOwnProperty(desiredResult)) {
       console.warn('Invalid Key');
       return;
     }
@@ -80,8 +111,10 @@ export const calculateStrategyResult = (input: string): number => {
         opponentChoice as keyof typeof opponentChoiceMapping
       ];
 
-    const yourGameChoice =
-      yourChoiceMapping[yourChoice as keyof typeof yourChoiceMapping];
+    const yourGameChoice = getYourGameChoiceFromOpponentChoice(
+      opponentGameChoice,
+      yourResultMapping[desiredResult as keyof typeof yourResultMapping]
+    );
 
     const gameResult = calculateGameScore(opponentGameChoice, yourGameChoice);
 

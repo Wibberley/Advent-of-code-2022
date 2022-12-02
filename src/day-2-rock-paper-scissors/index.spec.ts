@@ -1,62 +1,67 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import theoretically from 'jest-theories';
-import {calculateGameScore, calculateStrategyResult, GameChoice} from '.';
+import {
+  calculateGameScore,
+  calculateStrategyResult,
+  GameChoice,
+  GameOutcome,
+} from '.';
 
 describe('day-2-rock-paper-scissors', () => {
   const theories = [
     {
       opponentChoice: GameChoice.Rock,
       yourChoice: GameChoice.Rock,
-      expectedOutcome: 'DRAW',
+      expectedOutcome: GameOutcome.DRAW,
       expectedScore: 4,
     },
     {
       opponentChoice: GameChoice.Rock,
       yourChoice: GameChoice.Paper,
-      expectedOutcome: 'WIN',
+      expectedOutcome: GameOutcome.WIN,
       expectedScore: 8,
     },
     {
       opponentChoice: GameChoice.Rock,
       yourChoice: GameChoice.Scissors,
-      expectedOutcome: 'LOSS',
+      expectedOutcome: GameOutcome.LOSS,
       expectedScore: 3,
     },
     {
       opponentChoice: GameChoice.Paper,
       yourChoice: GameChoice.Paper,
-      expectedOutcome: 'DRAW',
+      expectedOutcome: GameOutcome.DRAW,
       expectedScore: 5,
     },
     {
       opponentChoice: GameChoice.Paper,
       yourChoice: GameChoice.Rock,
-      expectedOutcome: 'LOSS',
+      expectedOutcome: GameOutcome.LOSS,
       expectedScore: 1,
     },
     {
       opponentChoice: GameChoice.Paper,
       yourChoice: GameChoice.Scissors,
-      expectedOutcome: 'WIN',
+      expectedOutcome: GameOutcome.WIN,
       expectedScore: 9,
     },
     {
       opponentChoice: GameChoice.Scissors,
       yourChoice: GameChoice.Scissors,
-      expectedOutcome: 'DRAW',
+      expectedOutcome: GameOutcome.DRAW,
       expectedScore: 6,
     },
     {
       opponentChoice: GameChoice.Scissors,
       yourChoice: GameChoice.Rock,
-      expectedOutcome: 'WIN',
+      expectedOutcome: GameOutcome.WIN,
       expectedScore: 7,
     },
     {
       opponentChoice: GameChoice.Scissors,
       yourChoice: GameChoice.Paper,
-      expectedOutcome: 'LOSS',
+      expectedOutcome: GameOutcome.LOSS,
       expectedScore: 2,
     },
   ];
@@ -78,7 +83,40 @@ describe('day-2-rock-paper-scissors', () => {
     }
   );
 
-  it('Given multiple games When this is processed via calculateStrategyResult Then the total score of each game of 15 is returned', () => {
+  it('Given a single game where our desired result is draw When this is processed via calculateStrategyResult Then the score of 4 is returned', () => {
+    // Given
+    const input = `A Y`;
+
+    // When
+    const result = calculateStrategyResult(input);
+
+    // Then
+    expect(result).toEqual(4);
+  });
+
+  it('Given a single game where our desired result is win When this is processed via calculateStrategyResult Then the score of 7 is returned', () => {
+    // Given
+    const input = `C Z`;
+
+    // When
+    const result = calculateStrategyResult(input);
+
+    // Then
+    expect(result).toEqual(7);
+  });
+
+  it('Given a single game where our desired result is lose When this is processed via calculateStrategyResult Then the score of 1 is returned', () => {
+    // Given
+    const input = `B X`;
+
+    // When
+    const result = calculateStrategyResult(input);
+
+    // Then
+    expect(result).toEqual(1);
+  });
+
+  it('Given multiple games When this is processed via calculateStrategyResult Then the total score of each game of 12 is returned', () => {
     // Given
     const input = `A Y
 B X
@@ -88,7 +126,7 @@ C Z`;
     const result = calculateStrategyResult(input);
 
     // Then
-    expect(result).toEqual(15);
+    expect(result).toEqual(12);
   });
 
   it('Given the game input When this is processed via calculateStrategyResult Then the total score is returned!', () => {
