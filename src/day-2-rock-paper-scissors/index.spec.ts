@@ -132,7 +132,7 @@ C Z`;
   it('Given the game input When this is processed via calculateStrategyResult Then the total score is returned!', () => {
     // Given
     const input = fs.readFileSync(
-      path.join(__dirname, 'resources/input.txt'),
+      path.join(__dirname, './resources/input.txt'),
       'utf8'
     );
 

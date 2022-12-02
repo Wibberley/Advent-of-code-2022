@@ -17,7 +17,7 @@ describe('day-1-calorie-counting-task-one', () => {
   it('Given 1 elf with multiple foods When calculateTaskOne is called Then the sum of each food is returned', () => {
     // Given
     const input = `100
-    200`;
+200`;
 
     // When
     const output = calculate(input, 1);
@@ -29,13 +29,13 @@ describe('day-1-calorie-counting-task-one', () => {
   it('Given 3 elves with one food each When calculateTaskOne is called Then the highest food calories is returned', () => {
     // Given
     const input = `100
-    50
-    
-    200
-    500
-    
-    50
-    400`;
+50
+
+200
+500
+
+50
+400`;
 
     // When
     const output = calculate(input, 1);
@@ -47,7 +47,7 @@ describe('day-1-calorie-counting-task-one', () => {
   it('Given the resource input When calculateTaskOne is called with this input Then we get the score!', () => {
     // Given
     const input = fs.readFileSync(
-      path.join(__dirname, 'resources/test_input.txt'),
+      path.join(__dirname, './resources/test_input.txt'),
       'utf8'
     );
 
@@ -61,7 +61,7 @@ describe('day-1-calorie-counting-task-one', () => {
   it('Given the resource input When calculateTaskOne is called with this input Then we get the score!', () => {
     // Given
     const input = fs.readFileSync(
-      path.join(__dirname, 'resources/input.txt'),
+      path.join(__dirname, './resources/input.txt'),
       'utf8'
     );
 
@@ -77,17 +77,17 @@ describe('day-1-calorie-counting-task-two', () => {
   it('Given 5 elves with multiple foods When calculateTaskTwo is called Then we get the sum of the highest 3 elves', () => {
     // Given
     const input = `100
-        50
-        
-        200
-        500
-        
-        50
-        400
-        
-        100
-        
-        600`;
+50
+
+200
+500
+
+50
+400
+
+100
+
+600`;
 
     // When
     const output = calculate(input, 3);
@@ -99,7 +99,7 @@ describe('day-1-calorie-counting-task-two', () => {
   it('Given the resource input When calculateTaskTwo is called with this input Then we get the score!', () => {
     // Given
     const input = fs.readFileSync(
-      path.join(__dirname, 'resources/input.txt'),
+      path.join(__dirname, './resources/input.txt'),
       'utf8'
     );
 
