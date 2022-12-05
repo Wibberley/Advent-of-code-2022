@@ -61,8 +61,10 @@ class DayFivePuzzle {
         toStack.push(crate);
       }
     } else {
+      const crateIndex = fromStack.length - rearrangmentProcedure.amount;
       for (let i = 0; i < rearrangmentProcedure.amount; i++) {
-        const crate = fromStack.pop();
+        const crate = fromStack[crateIndex];
+        fromStack.splice(crateIndex, 1);
 
         if (!crate) {
           break;
