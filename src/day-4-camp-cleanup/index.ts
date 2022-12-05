@@ -42,29 +42,22 @@ class DayFourPuzzle {
     assignmentOne: Assignment,
     assignmentTwo: Assignment
   ): boolean {
-    if (assignmentOne.maxSectionId < assignmentTwo.maxSectionId) {
-      return false;
-    }
-
-    if (assignmentOne.minSectionId > assignmentTwo.minSectionId) {
-      return false;
-    }
-
-    return true;
+    return (
+      (assignmentOne.minSectionId >= assignmentTwo.minSectionId &&
+        assignmentOne.maxSectionId <= assignmentTwo.maxSectionId) ||
+      (assignmentTwo.minSectionId >= assignmentOne.minSectionId &&
+        assignmentTwo.maxSectionId <= assignmentOne.maxSectionId)
+    );
   }
 
   private checkIfAssignmentsOverLap(
     assignmentOne: Assignment,
     assignmentTwo: Assignment
   ): boolean {
-    let result = false;
-    assignmentTwo.sectionIds.forEach(sectionId => {
-      if (assignmentOne.sectionIds.includes(sectionId)) {
-        result = true;
-        return;
-      }
-    });
-    return result;
+    return (
+      assignmentOne.minSectionId <= assignmentTwo.maxSectionId &&
+      assignmentOne.maxSectionId >= assignmentTwo.minSectionId
+    );
   }
 
   public calculateTaskOne(): number {
