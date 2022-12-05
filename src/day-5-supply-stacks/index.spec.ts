@@ -20,7 +20,7 @@ describe('day-5-supply-stacks', () => {
 
   it('Given three stacks of crates and no rearrangment procedures When this is processed via calculateTaskOne Then the crate at the top of the stack will be returned', () => {
     // Given
-    const input = `[D]
+    const input = `   [D]
 [N] [B] [X]
 [Z] [C] [F]
  1   2   3`;
@@ -30,7 +30,7 @@ describe('day-5-supply-stacks', () => {
     const result = puzzle.calculateTaskOne();
 
     // Then
-    expect(result).toEqual('DBX');
+    expect(result).toEqual('NDX');
   });
 
   it('Given a two stack of crates and and a rearrangment procedure to move the left create to the right stack When this is processed via calculateTaskOne Then the crate at the top of the two stacks will be returned', () => {
@@ -40,8 +40,7 @@ describe('day-5-supply-stacks', () => {
 [Z] [C]
  1   2
 
-move 1 from 1 to 2
- `;
+move 1 from 1 to 2`;
 
     // When
     const puzzle = new DayFivePuzzle(input);
@@ -55,11 +54,10 @@ move 1 from 1 to 2
     // Given
     const input = `[D] 
 [N] [B]   
-[Z] [C]
+[Z] [C] [A]
  1   2   3
 
-move 2 from 1 to 3
- `;
+move 2 from 1 to 3`;
 
     // When
     const puzzle = new DayFivePuzzle(input);
@@ -82,5 +80,52 @@ move 2 from 1 to 3
 
     // Then
     expect(result).toEqual('CMZ');
+  });
+
+  it('Given the game input When this is processed by calculateTaskOne Then the score is returned', () => {
+    // Given
+    const input = fs.readFileSync(
+      path.join(__dirname, './resources/input.txt'),
+      'utf8'
+    );
+
+    // When
+    const puzzle = new DayFivePuzzle(input);
+    const result = puzzle.calculateTaskOne();
+
+    // Then
+    console.log('result', result);
+  });
+
+  it('Given a three stack of crates and and a rearrangment procedure to move the 2 crates from 1 to 3 When this is processed via calculateTaskTwo Then the crate at the top of the three stacks will be returned', () => {
+    // Given
+    const input = `[D] 
+[N] [B]   
+[Z] [C] [A]
+ 1   2   3
+
+move 2 from 1 to 3`;
+
+    // When
+    const puzzle = new DayFivePuzzle(input);
+    const result = puzzle.calculateTaskTwo();
+
+    // Then
+    expect(result).toEqual('ZBD');
+  });
+
+  it('Given the game input When this is processed by calculateTaskTwo Then the score is returned', () => {
+    // Given
+    const input = fs.readFileSync(
+      path.join(__dirname, './resources/input.txt'),
+      'utf8'
+    );
+
+    // When
+    const puzzle = new DayFivePuzzle(input);
+    const result = puzzle.calculateTaskTwo();
+
+    // Then
+    console.log('result', result);
   });
 });
