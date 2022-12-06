@@ -1,3 +1,6 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 class Assignment {
   constructor(private assignment: string) {}
 
@@ -26,10 +29,15 @@ class Assignment {
 }
 
 class DayFourPuzzle {
-  constructor(private puzzleInput: string) {}
+  constructor() {}
 
   private getAssignmentsPairs(): Assignment[][] {
-    const stringAssignmentPairs = this.puzzleInput.split(/\r?\n/);
+    const puzzleInput = fs.readFileSync(
+      path.join(__dirname, './resources/test_input.txt'),
+      'utf8'
+    );
+
+    const stringAssignmentPairs = puzzleInput.split(/\r?\n/);
     return stringAssignmentPairs.map(stringAssignmentPair => {
       const assignments = stringAssignmentPair.split(',');
       const assignmentOne = new Assignment(assignments[0]);
