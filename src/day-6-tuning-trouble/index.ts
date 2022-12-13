@@ -17,9 +17,7 @@ class TaskResponse {
       return false;
     }
 
-    return !this._markers.some(
-      (marker, index, markers) => markers.indexOf(marker) !== index
-    );
+    return !/(.).*\1/.test(this.marker);
   }
 
   public addMarker(marker: string) {
