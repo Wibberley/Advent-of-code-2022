@@ -17,7 +17,7 @@ $ ls
     const result = puzzle.CalculateTaskOne();
 
     // Then
-    expect(result).toEqual('29116');
+    expect(result).toEqual('58232');
   });
 
   it('Given a file system that has a 3 directories and 2 files under 100000 When this is processed by calculateTaskOne Then the total of the 2 files is returned', () => {
@@ -35,7 +35,7 @@ $ ls
     const result = puzzle.CalculateTaskOne();
 
     // Then
-    expect(result).toEqual('700');
+    expect(result).toEqual('900');
   });
 
   it('Given a file system that has a 4 directories and 3 files under 100000 When this is processed by calculateTaskOne Then the total of the 3 files is returned', () => {
@@ -58,7 +58,7 @@ $ ls
     const result = puzzle.CalculateTaskOne();
 
     // Then
-    expect(result).toEqual('1500');
+    expect(result).toEqual('2500');
   });
 
   it('Given a test input that contains 10 files and 4 directories When this is processed by calculateTaskOne Then the total size of files under 100000 is 95437', () => {
@@ -76,18 +76,56 @@ $ ls
     expect(result).toEqual('95437');
   });
 
-  // it('Given the game input When this is processed by calculateTaskOne Then the score is returned', () => {
-  //   // Given
-  //   const input = fs.readFileSync(
-  //     path.join(__dirname, './resources/input.txt'),
-  //     'utf8'
-  //   );
+  it('Given a file system that has a 4 directories and 3 files with a total size of 40000001 When this is processed by calculateTaskOne Then the total of the 1 directory with a size greater than 1 is retured', () => {
+    // Given
+    const input = `$ cd /
+$ ls
+dir a
+dir b
+30000000 x.txt
+$ cd a
+$ ls
+9999999 b.txt
+$ cd ..
+$ cd b
+$ ls
+2 b.txt`;
 
-  //   // When
-  //   const puzzle = new DaySevenPuzzle(input);
-  //   const result = puzzle.calculateTaskOne();
+    // When
+    const puzzle = new DaySevenPuzzle(input);
+    const result = puzzle.CalculateTaskTwo();
 
-  //   // Then
-  //   console.log('result', result);
-  // });
+    // Then
+    expect(result).toEqual('2');
+  });
+
+  it('Given the game input When this is processed by CalculateTaskOne Then the score is returned', () => {
+    // Given
+    const input = fs.readFileSync(
+      path.join(__dirname, './resources/input.txt'),
+      'utf8'
+    );
+
+    // When
+    const puzzle = new DaySevenPuzzle(input);
+    const result = puzzle.CalculateTaskOne();
+
+    // Then
+    console.log('Task One Result:', result);
+  });
+
+  it('Given the game input When this is processed by CalculateTaskTwo Then the score is returned', () => {
+    // Given
+    const input = fs.readFileSync(
+      path.join(__dirname, './resources/input.txt'),
+      'utf8'
+    );
+
+    // When
+    const puzzle = new DaySevenPuzzle(input);
+    const result = puzzle.CalculateTaskTwo();
+
+    // Then
+    console.log('Task Two Result:', result);
+  });
 });

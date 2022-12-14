@@ -3,88 +3,146 @@ interface IMemory {
 }
 
 class Console {
-  private constructor(public fileSystem: FileSystem) {}
+  private constructor(private readonly fileSystem: FileSystem) {}
 
-  private currentDirectory: Directory | undefined = undefined;
-
-  public RunCommand(commandAndOutput: CommandAndOutput) {
-    if (commandAndOutput.command.includes('cd')) {
-      if (commandAndOutput.command.includes('/')) {
-        this.currentDirectory = this.fileSystem.rootDirectory;
-      } else if (commandAndOutput.command.includes('..')) {
-        if (!this.currentDirectory) {
-          throw new Error('Not event started!');
-        }
-
-        const parent = this.currentDirectory.parent;
-
-        if (!parent) {
-          throw new Error('At Root!');
-        }
-
-        this.currentDirectory = parent;
+  public RunCommand(input: CommandAndOutput) {
+    if (input.command.includes('cd')) {
+      if (input.command.includes('/')) {
+        this.fileSystem.GoToRoot();
+      } else if (input.command.includes('..')) {
+        this.fileSystem.GoToParent();
       } else {
-        const directoryPath = commandAndOutput.command.split(' ')[2];
-
-        const foundDirectory = this.currentDirectory?.subDirectories.filter(
-          x => x.path === directoryPath
-        )[0];
-
-        if (!foundDirectory) {
-          throw new Error(`Error finding directory with path ${directoryPath}`);
-        }
-
-        this.currentDirectory = foundDirectory;
+        this.fileSystem.GoToDirectory(input.command.split(' ')[2]);
       }
     }
 
-    if (commandAndOutput.command.includes('ls')) {
-      commandAndOutput.output.forEach(output => {
-        if (!this.currentDirectory) {
-          throw new Error('Nothing to list!!');
-        }
-
-        if (output.startsWith('dir')) {
-          this.currentDirectory.AddDirectory(output);
-        } else {
-          this.currentDirectory.AddFile(File.ParseFileData(output));
-        }
-      });
+    if (input.command.includes('ls')) {
+      this.fileSystem.ListFiles(input.output);
     }
   }
 
-  static CreateConsole() {
-    return new Console(FileSystem.CreateFileSystem());
+  static CreateConsole(fileSystem: FileSystem) {
+    return new Console(fileSystem);
   }
 }
 
 class FileSystem {
-  private constructor(public rootDirectory: Directory) {}
+  public readonly capacity: number = 70000000;
+
+  public get availableCapacity(): number {
+    return this.capacity - this.rootDirectory.size;
+  }
+
+  public currentDirectory: Directory;
+
+  private constructor(private readonly rootDirectory: Directory) {
+    this.currentDirectory = rootDirectory;
+  }
+
+  GoToRoot() {
+    this.currentDirectory = this.rootDirectory;
+  }
+
+  GoToParent() {
+    if (this.currentDirectory.parent) {
+      this.currentDirectory = this.currentDirectory.parent;
+      return;
+    }
+
+    console.warn('At Root!');
+  }
+
+  GoToDirectory(directoryPath: string) {
+    const foundDirectory = this.currentDirectory.subDirectories.filter(
+      x => x.path === directoryPath
+    )[0];
+
+    if (!foundDirectory) {
+      throw new Error(`Error finding directory with path ${directoryPath}`);
+    }
+
+    this.currentDirectory = foundDirectory;
+  }
+
+  ListFiles(output: string[]) {
+    output.forEach(output => {
+      if (output.startsWith('dir')) {
+        this.currentDirectory.AddDirectory(output);
+      } else {
+        this.currentDirectory.AddFile(File.ParseFileData(output));
+      }
+    });
+  }
+
+  SearchForDirectoriesGreaterThanSize(
+    maxSize: number,
+    parentDirectory: Directory = this.rootDirectory
+  ): Directory[] {
+    let directories: Directory[] = [];
+
+    if (parentDirectory.size > maxSize) {
+      directories.push(parentDirectory);
+    }
+
+    for (const directory of parentDirectory.subDirectories) {
+      const foundDirectories = this.SearchForDirectoriesGreaterThanSize(
+        maxSize,
+        directory
+      );
+
+      if (foundDirectories.length > 0) {
+        directories = directories.concat(foundDirectories);
+      }
+    }
+
+    return directories;
+  }
+
+  SearchForDirectoriesLessThanSize(
+    maxSize: number,
+    parentDirectory: Directory = this.rootDirectory
+  ): Directory[] {
+    let directories: Directory[] = [];
+
+    if (parentDirectory.size < maxSize) {
+      directories.push(parentDirectory);
+    }
+
+    for (const directory of parentDirectory.subDirectories) {
+      const foundDirectories = this.SearchForDirectoriesLessThanSize(
+        maxSize,
+        directory
+      );
+      if (foundDirectories.length > 0) {
+        directories = directories.concat(foundDirectories);
+      }
+    }
+
+    return directories;
+  }
 
   static CreateFileSystem() {
     return new FileSystem(Directory.CreateDirectory('dir /'));
   }
 }
 
-class Directory {
+class Directory implements IMemory {
   public subDirectories: Directory[] = [];
   public files: File[] = [];
 
   constructor(public path: string, public parent: Directory | undefined) {}
 
-  get size(): number {
+  GetTotalSize(): number {
     return (
       this.subDirectories.reduce(
-        (previous, current) =>
-          previous + current.size < 100000 ? current.size : 0,
+        (previous, current) => previous + current.GetTotalSize(),
         0
-      ) +
-      this.files.reduce(
-        (previous, current) =>
-          previous + current.size < 100000 ? current.size : 0,
-        0
-      )
+      ) + this.files.reduce((previous, current) => previous + current.size, 0)
     );
+  }
+
+  public get size(): number {
+    return this.GetTotalSize();
   }
 
   public AddDirectory(path: string): Directory {
@@ -141,19 +199,39 @@ class DaySevenPuzzle {
 
   public CalculateTaskOne(): string {
     const commandAndOutputs = this.getCommandsAndOuput();
-    const consoleObject = Console.CreateConsole();
+
+    const fileSystem = FileSystem.CreateFileSystem();
+    const consoleObject = Console.CreateConsole(fileSystem);
 
     for (const commandAndOutput of commandAndOutputs) {
       consoleObject.RunCommand(commandAndOutput);
     }
 
-    console.log(JSON.stringify(consoleObject.fileSystem.rootDirectory));
-
-    return consoleObject.fileSystem.rootDirectory.size.toString();
+    return fileSystem
+      .SearchForDirectoriesLessThanSize(100000)
+      .reduce((previous, current) => {
+        return previous + current.size;
+      }, 0)
+      .toString();
   }
 
   public CalculateTaskTwo(): string {
-    return '';
+    const commandAndOutputs = this.getCommandsAndOuput();
+
+    const fileSystem = FileSystem.CreateFileSystem();
+    const consoleObject = Console.CreateConsole(fileSystem);
+
+    for (const commandAndOutput of commandAndOutputs) {
+      consoleObject.RunCommand(commandAndOutput);
+    }
+
+    const requiredSpaceToDelete = 30000000 - fileSystem.availableCapacity;
+
+    const foundDirectories = fileSystem.SearchForDirectoriesGreaterThanSize(
+      requiredSpaceToDelete
+    );
+
+    return foundDirectories.sort((a, b) => a.size - b.size)[0].size.toString();
   }
 }
 
